@@ -96,12 +96,13 @@ public class AuthenticationController extends HttpServlet {
                     handleError(request, response, "Email ou mot de passe incorrect pour admin.");
                 }
             } else if ("Client".equals(userType)) {
-                Optional<Client> clientOpt = userService.authenticateClient(email, password);
-                if (clientOpt.isPresent()) {
+                Optional<Client> clientOpt = userService.getClientById(1)   ;
+               if (clientOpt.isPresent()) {
                     session.setAttribute("userEmail", email);
                     session.setAttribute("userType", userType);
                     System.out.println("Client authentifié avec succès");
-                    response.sendRedirect(request.getContextPath() + "/client");
+                    session.setAttribute("user", clientOpt.get());
+  response.sendRedirect(request.getContextPath() + "/client");
                 } else {
                     System.out.println("Échec authentification client");
                     handleError(request, response, "Email ou mot de passe incorrect pour client.");

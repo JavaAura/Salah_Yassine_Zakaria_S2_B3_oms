@@ -1,15 +1,17 @@
 package com.oms.model;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+
+
 @Entity
 @Table(name = "admin")
 public class Admin extends User {
-    
+   
+	
     @Enumerated(EnumType.STRING)
     @Column(name = "admin_type", nullable = false)
     private AdminType adminType;

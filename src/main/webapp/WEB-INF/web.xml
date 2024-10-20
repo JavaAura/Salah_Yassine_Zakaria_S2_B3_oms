@@ -56,6 +56,16 @@
         <servlet-name>ProductController</servlet-name>
         <url-pattern>/products</url-pattern>
     </servlet-mapping>
+    
+<servlet>
+    <servlet-name>OrderController</servlet-name>
+    <servlet-class>com.oms.controller.OrderController</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>OrderController</servlet-name>
+    <url-pattern>/orders/*</url-pattern>
+</servlet-mapping>
 	
 	
 </web-app>

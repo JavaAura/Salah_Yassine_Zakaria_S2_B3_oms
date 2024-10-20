@@ -67,6 +67,11 @@
 		                </svg>
 		                Delete
 		            </a>
+		            
+		             <button class="flex items-center px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded" 
+                       th:onclick="openOrderModal([[${product.id}]], [[${product.name}]], [[${product.price}]])">
+                           Order
+                       </button>
 		        </div>
 		    </div>
 		</div>
@@ -91,6 +96,34 @@
             </ul>
         </nav>
     </div>
+    
+    
+    <!-- Order Modal -->
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="orderModal">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+        <h2 id="orderModalLabel" class="text-2xl font-bold mb-4">Order Product</h2>
+        <form id="orderForm" th:action="@{/orders}" method="post">
+            <input type="hidden" name="productId" id="orderProductId">
+            <input type="hidden" name="action" id="productAction" value="insert">
+            
+            <div class="mb-4">
+                <label for="quantity" class="block text-sm font-medium">Quantity</label>
+                <input type="number" id="quantity" name="quantity" class="mt-1 w-full border rounded-lg px-3 py-2" required min="1">
+                <p id="quantityError" class="text-red-500 text-sm mt-1 hidden"></p>
+            </div>
+
+            <div class="flex justify-end space-x-2">
+                <button type="button" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400" onclick="closeOrderModal()">Close</button>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Order</button>
+            </div>
+        </form>
+    </div>
+</div>
+    
+    
+    
+    
+    
 
     <!-- Modal -->
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="productModal">
@@ -133,6 +166,34 @@
     </div>
 
     <script>
+    
+    
+    
+
+    function closeOrderModal() {
+        document.getElementById('orderModal').classList.add('hidden');
+    }
+
+    document.getElementById('orderForm').addEventListener('submit', function (e) {
+        const quantityInput = document.getElementById('quantity');
+        const quantityError = document.getElementById('quantityError');
+        quantityError.textContent = '';
+
+        if (!quantityInput.value || quantityInput.value <= 0) {
+            quantityError.textContent = "Please enter a valid quantity.";
+            quantityError.classList.remove('hidden');
+            e.preventDefault(); // Prevent form submission
+        }
+    });
+
+    
+    
+    function openOrderModal(productId, productName, productPrice) {
+        document.getElementById('orderModalLabel').textContent = `Order ${productName}`;
+        document.getElementById('orderProductId').value = productId;
+        document.getElementById('orderModal').classList.remove('hidden');
+    }
+
         function openNewProductModal() {
             document.getElementById('productModalLabel').textContent = 'New Product';
             document.getElementById('productAction').value = 'insert';
