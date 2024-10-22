@@ -85,24 +85,27 @@ public class AuthenticationController extends HttpServlet {
                     session.setAttribute("userEmail", email);
                     session.setAttribute("userType", userType);
                     session.setAttribute("adminType", admin.getAdminType());
+                    session.setAttribute("authenticatedUser", admin);
                     System.out.println("Admin authentifié avec succès");
-                    if (admin.getAdminType().name()=="SUPER_ADMIN") {
-                        response.sendRedirect(request.getContextPath() + "/admin");
-					}else {
-                        response.sendRedirect(request.getContextPath() + "/client");
-					}
+                    if ("SUPER_ADMIN".equals(admin.getAdminType().name())) {
+                        response.sendRedirect("admin");
+                    } else {
+                        response.sendRedirect("client");
+                    }
+
                 } else {
                     System.out.println("Échec authentification admin");
                     handleError(request, response, "Email ou mot de passe incorrect pour admin.");
                 }
             } else if ("Client".equals(userType)) {
-                Optional<Client> clientOpt = userService.getClientById(1)   ;
-               if (clientOpt.isPresent()) {
+                Optional<Client> clientOpt = userService.authenticateClient(email, password);
+                if (clientOpt.isPresent()) {
+                	Client client = clientOpt.get();
                     session.setAttribute("userEmail", email);
                     session.setAttribute("userType", userType);
                     System.out.println("Client authentifié avec succès");
-                    session.setAttribute("user", clientOpt.get());
-  response.sendRedirect(request.getContextPath() + "/client");
+                    session.setAttribute("authenticatedUser", client);
+                    response.sendRedirect(request.getContextPath() + "/products");
                 } else {
                     System.out.println("Échec authentification client");
                     handleError(request, response, "Email ou mot de passe incorrect pour client.");
@@ -113,7 +116,9 @@ public class AuthenticationController extends HttpServlet {
             e.printStackTrace();
             handleError(request, response, "Une erreur est survenue lors de l'authentification.");
         }
-    }    private void handleError(HttpServletRequest request, HttpServletResponse response, String message) 
+    }  
+    
+    private void handleError(HttpServletRequest request, HttpServletResponse response, String message) 
             throws ServletException, IOException {
         ServletContext servletContext = getServletContext();
         WebContext context = new WebContext(request, response, servletContext);

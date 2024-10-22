@@ -91,8 +91,8 @@ public class OrderController extends HttpServlet {
         throws IOException {
 
     HttpSession session = request.getSession();
-    Client client = (Client) session.getAttribute("user");
-    System.out.println(client.toString());
+    Client client = (Client) session.getAttribute("authenticatedUser");
+  
 
     int productId = Integer.parseInt(request.getParameter("productId"));
     Product product = productService.findProduct(productId);
@@ -103,7 +103,11 @@ public class OrderController extends HttpServlet {
     if (order != null) {
         // If an order exists, add product to the existing order
         int quantity = Integer.parseInt(request.getParameter("quantity"));
+        if(product.getStock()>= quantity) {
         orderProductService.addProductToOrder(product, quantity, order);
+        }else {
+        	  request.setAttribute("error", "Stock is empty no product available");
+        }
 
     } else {
         // If no order exists, create a new one
